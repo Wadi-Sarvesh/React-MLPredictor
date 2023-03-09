@@ -28,6 +28,9 @@ const Profile = () => {
       <div>
       <input type = "file" accept = "image/*" onChange = {onImageChange}/>
       <img src={images} />
+      {images != '' ?(
+      <a href= {images}>Click to download</a>):<div/>}
+     
       </div>
       <div>
       {images == '' ?

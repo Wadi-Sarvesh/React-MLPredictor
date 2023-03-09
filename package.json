@@ -16,8 +16,8 @@
  
   "scripts": {
     "predeploy": "npm run build",
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "npm fetch.js && react-scripts start",
+    "build": "npm fetch.js && react-scripts build",
     "deploy": "gh-pages -b master -d build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

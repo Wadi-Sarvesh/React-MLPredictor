@@ -8,16 +8,34 @@ const videoConstraints = {
   facingMode: 'user',
 }
 const Profile = () => {
-  const[images, setImages] = useState([]);
+
+   var base64 = [];
+   const[queryImage, qImg] = useState('');
+   
+ 
+  //const[images, setImages] = useState([]);
+ 
   function onImageChange(e) {
     
-    setImages(URL.createObjectURL(e.target.files[0]));
+    //setImages(URL.createObjectURL(e.target.files[0]));
+    let file = e.target.files[0];
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+     
+      let readerR = reader.result;
+      qImg(readerR)
+      
+    } 
   }
+  
   const [picture, setPicture] = useState('')
   const webcamRef = React.useRef(null)
   const capture = React.useCallback(() => {
   const pictureSrc = webcamRef.current.getScreenshot()
   setPicture(pictureSrc)
+
+
   })
   return (
     <div>
@@ -27,13 +45,28 @@ const Profile = () => {
       </h2>
       <div>
       <input type = "file" accept = "image/*" onChange = {onImageChange}/>
-      <img src={images} />
-      {images != '' ?(
-      <a href= {images}>Click to download</a>):<div/>}
+      <div style= {{paddingBottom: '10px'}}>
+      <img src={queryImage} />
+      </div>
+      <div>
+      {queryImage != '' ?
+      (<button onClick = {() => { 
+  fetch("https://api.apilayer.com/image_to_text/upload", {method: "POST",  redirect: "follow",
+headers: {'Content-Type': 'application/json', 'apikey': 'za82j9wDAgPdklAlkcfzLWpwzil375MW'},
+body: JSON.stringify(queryImage)
+})
+.then(res => res.json())
+.then(data => {
+       console.log(data)
+     })      
+   }}  className="btn btn-primary">Upload
+   </button>):<div/>}
+   </div>
+      
      
       </div>
       <div>
-      {images == '' ?
+      {queryImage == '' ?
       <div>
       <div>
         {picture == '' ? (
@@ -46,12 +79,22 @@ const Profile = () => {
             videoConstraints={videoConstraints}
           />
         ) : (
+          <div>
           <img src={picture} />
-        )}
-      </div>
-      <div>
-        {picture != '' ? (
+          <div style = {{paddingTop: "10px"}}>
           <button
+ onClick = {() => { 
+  fetch("https://api.apilayer.com/image_to_text/upload", {method: "POST",  redirect: "follow",
+headers: {'Content-Type': 'application/json', 'apikey': 'za82j9wDAgPdklAlkcfzLWpwzil375MW'},
+body: JSON.stringify(picture)
+})
+.then(res => res.json())
+.then(data => {
+       console.log(data)
+     })      
+   }}  className="btn btn-primary">Upload
+   </button>
+   <button style = {{marginLeft: "10px"}}
             onClick={(e) => {
               e.preventDefault()
               setPicture(null)
@@ -62,8 +105,16 @@ const Profile = () => {
           >
             Retake
           </button>
+   </div>
+   </div>
+
+        )}
+      </div>
+      <div>
+        {picture != '' ? ( <div/>
+          
         ) : (
-          <button
+          <button 
             onClick={(e) => {
               e.preventDefault()
               capture()
